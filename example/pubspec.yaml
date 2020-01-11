@@ -45,3 +45,4 @@ flutter:
     - lib/assets/objects/cube.mtl
     - lib/assets/objects/torus.obj
     - lib/assets/objects/torus.mtl
+    - lib/assets/images/spotify.jpg
