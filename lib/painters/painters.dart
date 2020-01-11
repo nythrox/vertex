@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:vertex/mesh.dart';
 
@@ -7,7 +6,8 @@ class SceneCustomPainter extends CustomPainter {
   final _paint = Paint();
   final BlendMode blendMode;
 
-  SceneCustomPainter(this._meshInstances, {this.blendMode = BlendMode.multiply});
+  SceneCustomPainter(this._meshInstances,
+      {this.blendMode = BlendMode.multiply});
 
   @override
   void paint(canvas, size) {
@@ -16,7 +16,7 @@ class SceneCustomPainter extends CustomPainter {
 
     // Flip y
     // canvas.scale(1, 1);
-    if (_meshInstances != null) {
+    if (_meshInstances != null && _meshInstances.length > 0) {
       for (int i = 0; i < _meshInstances.length; i++) {
         if (_meshInstances[i].texture != null) {
           final paint = Paint();
@@ -32,25 +32,32 @@ class SceneCustomPainter extends CustomPainter {
           canvas.drawVertices(
               _meshInstances[i].vertices, BlendMode.multiply, paint);
         } else
-          canvas.drawVertices(
-              _meshInstances[i].vertices, blendMode, _paint);
+          canvas.drawVertices(_meshInstances[i].vertices, blendMode, _paint);
       }
     }
   }
 
   @override
   bool shouldRepaint(SceneCustomPainter oldPainter) {
-    // TODO: Do an actual state diff to check for repaint
-    return true;
+    if (_meshInstances.length > 0) return true;
+    return false;
   }
-}
 
+  @override
+  bool shouldRebuildSemantics(CustomPainter oldDelegate) {
+    return false;
+  }
+
+  @override
+  get semanticsBuilder => null;
+}
 
 class VertexMeshCustomPainter extends CustomPainter {
   VertexMeshInstance _meshInstance;
   final BlendMode blendMode;
-  
-  VertexMeshCustomPainter(this._meshInstance,  {this.blendMode = BlendMode.multiply});
+
+  VertexMeshCustomPainter(this._meshInstance,
+      {this.blendMode = BlendMode.multiply});
 
   @override
   void paint(canvas, size) {
@@ -78,8 +85,15 @@ class VertexMeshCustomPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(VertexMeshCustomPainter oldPainter) {
-    // TODO: Do an actual state diff to check for repaint
+  bool shouldRepaint(SceneCustomPainter oldPainter) {
     return true;
   }
+
+  @override
+  bool shouldRebuildSemantics(CustomPainter oldDelegate) {
+    return false;
+  }
+
+  @override
+  get semanticsBuilder => null;
 }

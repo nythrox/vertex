@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:vector_math/vector_math.dart' as vec32;
 import 'package:flutter/material.dart';
@@ -138,7 +139,6 @@ class VertexDefaultController extends ChangeNotifier
   void play() {
     _isPaused = false;
     _controllerState = ControllerState.running;
-    print("ready");
     notifyListeners();
   }
 
@@ -242,7 +242,6 @@ class VertexDefaultController extends ChangeNotifier
           _instances[i].position, _instances[i].rotation, _instances[i].scale);
       meshInstance.setTransform(
           _cameraViewMatrix * modelMatrix, _cameraProjectionMatrix);
-      continue;
     }
     notifyListeners();
   }
@@ -287,11 +286,11 @@ class RandomVertexController extends VertexDefaultController {
 
     _initInstances();
 
-    _randomizePositions();
+    randomizePositions();
 
-    _distributePositions();
+    distributePositions();
 
-    _randomizeRotations();
+    randomizeRotations();
 
     _ticker = Ticker(_handleTick);
 
@@ -314,7 +313,7 @@ class RandomVertexController extends VertexDefaultController {
 
   List<VertexObject> get meshInstances => _instances;
 
-  void _randomizePositions() {
+  void randomizePositions() {
     // Set initial values
     for (var i in _instances) {
       i.position.x = _rng.nextDouble() * 8 - 4;
@@ -323,7 +322,8 @@ class RandomVertexController extends VertexDefaultController {
     }
   }
 
-  void _distributePositions() {
+  void distributePositions() {
+    for (int i = 0; i < 40; i++)
     for (int j = 0; j < _instances.length; j++) {
       for (int k = j + 1; k < _instances.length; k++) {
         final pos0 = _instances[j].position;
@@ -347,7 +347,7 @@ class RandomVertexController extends VertexDefaultController {
     }
   }
 
-  void _randomizeRotations() {
+  void randomizeRotations() {
     _instances.forEach((VertexObject object) => object.rotation.setAxisAngle(
           vec32.Vector3(
             _rng.nextDouble() * 2.0 - 1.0,
@@ -469,7 +469,6 @@ class RandomVertexController extends VertexDefaultController {
     // Update camera
     _cameraOffset += (_targetCameraOffset - _cameraOffset) * 4 * dt;
     _buildCameraView();
-
     _setTransform();
   }
 

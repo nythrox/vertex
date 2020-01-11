@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:vertex/painters/painters.dart';
 import 'package:vertex/vertex.dart';
@@ -10,8 +9,11 @@ class SceneRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: SceneCustomPainter(vertexMeshInstances),
+    return Container(
+      constraints: const BoxConstraints.expand(),
+      child: CustomPaint(
+        painter: SceneCustomPainter(vertexMeshInstances),
+      ),
     );
   }
 }
