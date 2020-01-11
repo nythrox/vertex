@@ -1,3 +1,4 @@
+import 'src/blend_mask/blend_mask.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 import 'package:flutter/material.dart';
 import 'package:vertex/controllers/vertex_controller.dart';
@@ -32,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   RandomVertexController controller;
-  CameraVertexController whaleController;
+  CameraVertexController starController;
 
   List<InstanceInfo> generateInstanceList() {
     List<InstanceInfo> instances = [];
@@ -49,10 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    whaleController = CameraVertexController(
-        context,
-        [ObjPath("whale", "lib/assets/objects", "whale.obj")],
-        [InstanceInfo("whale")]);
+    starController = CameraVertexController(context, [
+      ObjPath("star", "lib/assets/objects", "star.obj")
+    ], [
+      InstanceInfo("star",
+          position: vec.Vector3(2, -3, 3), scale: vec.Vector3(.5, .5, .5)),
+    ]);
     controller = RandomVertexController(
         context,
         //path to star mesh
@@ -70,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!controller.isReady) {
       controller.init();
     }
-    if (!whaleController.isReady) {
-      whaleController.init();
+    if (!starController.isReady) {
+      starController.init();
     }
     return Scaffold(
       appBar: AppBar(
@@ -87,22 +90,54 @@ class _MyHomePageState extends State<MyHomePage> {
               return Center(child: CircularProgressIndicator());
             },
           ),
-          ListenableBuilder(
-            listenable: whaleController,
-            builder: (context) {
-              if (whaleController.isReady)
-                return ObjectRenderer(whaleController.meshInstances[0]);
-              return Center(
-                  child: FlutterLogo(
+          Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlutterLogo(
                 size: MediaQuery.of(context).size.width / 2,
-              ));
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                    "Move your finger across the screen to move the green star.",textAlign: TextAlign.center,),
+              ),
+            ],
+          )),
+          ListenableBuilder(
+            listenable: starController,
+            builder: (context) {
+              if (starController.isReady)
+                return GestureDetector(
+                    onPanUpdate: (details) {
+                      starController.updateXY(details.delta);
+                    },
+                    child: BlendMask(
+                        blendMode: BlendMode.exclusion,
+                        child:
+                            ObjectRenderer(starController.meshInstances[0])));
+              return Container();
             },
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              controller.addInstance(
+                  InstanceInfo('star', scale: vec.Vector3(0.5, 0.5, 0.5)));
+            },
+          ),
+          FloatingActionButton(
+            child: Icon(Icons.remove),
+            onPressed: () {
+              controller.removeLastInstance();
+            },
+          ),
           ListenableBuilder(
             listenable: controller,
             builder: (context) => FloatingActionButton(
@@ -118,33 +153,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              controller.addInstance(
-                  InstanceInfo('star', scale: vec.Vector3(0.5, 0.5, 0.5)));
-            },
-          ),
-          FloatingActionButton(
-            child: Icon(Icons.remove),
-            onPressed: () {
-              controller.removeLastInstance();
-            },
-          ),
-          FloatingActionButton(
             child: Icon(Icons.replay),
             onPressed: () {
               controller.randomizePositions();
               controller.distributePositions();
               controller.randomizeRotations();
             },
-          )
+          ),
         ],
       ),
     );
   }
+
   @override
   void dispose() {
-    whaleController.dispose();
+    starController.dispose();
     controller.dispose();
     super.dispose();
   }
