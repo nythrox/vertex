@@ -103,7 +103,7 @@ class VertexDefaultController extends ChangeNotifier
 
   bool get isReady =>
       _controllerState != ControllerState.none &&
-      _controllerState != ControllerState.disabled&&
+      _controllerState != ControllerState.disabled &&
       _controllerState != ControllerState.loading;
 
   int _instanceId = 0;
@@ -257,6 +257,10 @@ class VertexDefaultController extends ChangeNotifier
 class RandomVertexController extends VertexDefaultController {
   final List<VertexObject> _instances = [];
 
+  double speed = 1.0;
+  double spawnPos = 16.0;
+  double despawnPos = -16.0;
+
   vec32.Matrix4 _cameraProjectionMatrix;
   vec32.Matrix4 _cameraViewMatrix;
 
@@ -325,27 +329,27 @@ class RandomVertexController extends VertexDefaultController {
 
   void distributePositions() {
     for (int i = 0; i < 40; i++)
-    for (int j = 0; j < _instances.length; j++) {
-      for (int k = j + 1; k < _instances.length; k++) {
-        final pos0 = _instances[j].position;
-        final pos1 = _instances[k].position;
-        final diffPos = pos1 - pos0;
-        final dist = diffPos.xy.length;
-        if (dist < 5.0) {
-          // Push both objects in a random direction
-          final norm = vec32.Vector3(
-                  _rng.nextDouble() * 2 - 1, _rng.nextDouble() * 2 - 1, 0.0)
-              .normalized();
+      for (int j = 0; j < _instances.length; j++) {
+        for (int k = j + 1; k < _instances.length; k++) {
+          final pos0 = _instances[j].position;
+          final pos1 = _instances[k].position;
+          final diffPos = pos1 - pos0;
+          final dist = diffPos.xy.length;
+          if (dist < 5.0) {
+            // Push both objects in a random direction
+            final norm = vec32.Vector3(
+                    _rng.nextDouble() * 2 - 1, _rng.nextDouble() * 2 - 1, 0.0)
+                .normalized();
 
-          pos0.add(-norm * 0.2);
-          pos1.add(norm * 0.2);
+            pos0.add(-norm * 0.2);
+            pos1.add(norm * 0.2);
 
-          // Clamp values
-          pos0.x = pos0.x.clamp(-5.0, 5.0);
-          pos1.x = pos1.x.clamp(-5.0, 5.0);
+            // Clamp values
+            pos0.x = pos0.x.clamp(-5.0, 5.0);
+            pos1.x = pos1.x.clamp(-5.0, 5.0);
+          }
         }
       }
-    }
   }
 
   void randomizeRotations() {
@@ -441,7 +445,7 @@ class RandomVertexController extends VertexDefaultController {
             _instances[i].angularVelocity.normalized() * 0.5 * kDrag * avLength;
       }
       // Integrate velocity factors
-      _instances[i].position.y += 1.0 * dt;
+      _instances[i].position.y += speed * dt;
       _instances[i].position += _instances[i].linearVelocity * dt;
       // Integrate the angular velocity using the quaternion integration equation
       _instances[i].rotation = quaternionExponent(vec32.Quaternion(
@@ -460,8 +464,14 @@ class RandomVertexController extends VertexDefaultController {
             0.0,
           )) *
           _instances[i].rotation;
-      if (_instances[i].position.y >= 16.0) {
-        _instances[i].position.y = -16.0;
+      if (spawnPos > despawnPos) {
+        if (_instances[i].position.y <= despawnPos) {
+          _instances[i].position.y = spawnPos;
+        }
+      } else if (spawnPos < despawnPos) {
+        if (_instances[i].position.y >= despawnPos) {
+          _instances[i].position.y = spawnPos;
+        }
       }
     }
 
