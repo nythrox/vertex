@@ -85,7 +85,7 @@ class VertexMeshCustomPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SceneCustomPainter oldPainter) {
+  bool shouldRepaint(VertexMeshCustomPainter oldPainter) {
     return true;
   }
 

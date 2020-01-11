@@ -10,7 +10,7 @@ abstract class VertexController extends ChangeNotifier {
   List<VertexMeshInstance> get meshInstances;
 }
 
-enum ControllerState { none, loading, loaded, ready, running, paused, disabled }
+enum ControllerState { none, loading, ready, running, paused, disabled }
 
 class VertexObject extends VertexMeshInstance {
   vec32.Vector3 position;
@@ -103,7 +103,8 @@ class VertexDefaultController extends ChangeNotifier
 
   bool get isReady =>
       _controllerState != ControllerState.none &&
-      _controllerState != ControllerState.disabled;
+      _controllerState != ControllerState.disabled&&
+      _controllerState != ControllerState.loading;
 
   int _instanceId = 0;
 
