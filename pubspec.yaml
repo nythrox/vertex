@@ -1,8 +1,8 @@
 name: vertex
-description: A small and flexible Flutter 3D engine than can parse, render and control .obj and .mtl files.
+description: A small and flexible Flutter 3D engine than can parse, render and control .obj and .mtl files
 version: 0.0.1
 author:
-homepage:
+homepage: https://github.com/nythrox/vertex/tree/master
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
