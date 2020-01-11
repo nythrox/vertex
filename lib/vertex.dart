@@ -7,3 +7,4 @@ export 'obj/obj_loader.dart';
 export 'painters/painters.dart';
 export 'widgets/object_renderer.dart';
 export 'widgets/scene_renderer.dart';
+export 'widgets/listenable_builder.dart';
