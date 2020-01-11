@@ -14,8 +14,8 @@ class SceneCustomPainter extends CustomPainter {
     canvas.scale(size.width * 0.5, size.height * 0.5);
     canvas.translate(1.0, 1.0);
 
-    // Flip y
-    // canvas.scale(1, 1);
+    // Flip x and y
+    canvas.scale(-1, -1);
     if (_meshInstances != null && _meshInstances.length > 0) {
       for (int i = 0; i < _meshInstances.length; i++) {
         if (_meshInstances[i].texture != null) {
@@ -64,8 +64,8 @@ class VertexMeshCustomPainter extends CustomPainter {
     canvas.scale(size.width * 0.5, size.height * 0.5);
     canvas.translate(1.0, 1.0);
 
-    // Flip y
-    // canvas.scale(1, -1);
+    // Flip x and y
+    canvas.scale(-1, -1);
 
     if (_meshInstance != null) {
       final paint = Paint();
