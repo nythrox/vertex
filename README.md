@@ -9,72 +9,82 @@ It's useful for creting differenciated 3d effects that will make your app more u
 
 
 ##### Specifying files and instances
+```dart
     RandomVertexController controller;
-    
+
     @override
     void initState() {
-    	super.initState();
-    	controller = RandomVertexController(context, [
-    	ObjPath("star", "lib/assets/objects", "star.obj")
-    	], [
-    	InstanceInfo("star",
-    	position: Vector3(2, -3, 3), 
-    	scale: Vector3(.5, .5, .5)),
-    	rotation: vec.Quaternion(40,40,40,40)
-    	]);
-    }
+        super.initState();
+        controller = RandomVertexController(context, [
+        ObjPath("star", "lib/assets/objects", "star.obj")
+        ], [
+        InstanceInfo("star",
+        position: Vector3(2, -3, 3), 
+        scale: Vector3(.5, .5, .5)),
+        rotation: vec.Quaternion(40,40,40,40)
+        ]);
+}
+```
     
 
 ##### Initializing a Controller
+```dart
     @override
     Widget build(BuildContext context) {
         if (!controller.isReady) {
           controller.init();
         }
-    	return Container();
+        return Container();
     }
+```
+
 
 ##### Rendering Instances
-    
+```dart
     @override
     Widget build(BuildContext context) {
         if (!controller.isReady) {
           controller.init();
         }
-    	return ListenableBuilder(
+        return ListenableBuilder(
                 listenable: controller,
                 builder: (context) {
                   if (controller.isReady)
                     return SceneRenderer(controller.meshInstances);
                   return Center(child: CircularProgressIndicator());
                 },
-    	),
+        ),
     }
-##### Interacting with a Controller
+```
 
-        @override
-        Widget build(BuildContext context) {
-            if (!controller.isReady) {
-              controller.init();
-            }
-        	return ListenableBuilder(
-                listenable: starController,
-                builder: (context) {
-                  if (starController.isReady)
-                    return GestureDetector(
-                        onPanUpdate: (details) {
-                          starController.updateXY(details.delta);
-                        },
-                        child: BlendMask(
-                            blendMode: BlendMode.exclusion,
-                            child:
-                                ObjectRenderer(starController.meshInstances[0])));
-                  return Container();
-                },
-              ),
+##### Interacting with a Controller
+```dart
+    @override
+    Widget build(BuildContext context) {
+        if (!controller.isReady) {
+          controller.init();
         }
+        return ListenableBuilder(
+            listenable: starController,
+            builder: (context) {
+              if (starController.isReady)
+                return GestureDetector(
+                    onPanUpdate: (details) {
+                      starController.updateXY(details.delta);
+                    },
+                    child: BlendMask(
+                        blendMode: BlendMode.exclusion,
+                        child:
+                            ObjectRenderer(starController.meshInstances[0])));
+              return Container();
+            },
+          ),
+    }
+```
+
 
 ##### Creating a Controller
+```dart
     class MyController extends VertexDefaultController {
     	//override methods to create controller
     
@@ -116,10 +126,12 @@ It's useful for creting differenciated 3d effects that will make your app more u
      }
     
     }
+```
+
 #### Limitations:
 Currently, vertex can only render triangular mesh .obj files
 Not all .mtl attributes are currently reconized, only diffuseColor and texture.
 
 #### Performance:
-Everything is rendered in 60fps, but rendering too many instances at once the framerate drops.
-Since flutter currently doesnt allow us to access OpenGL the performance isnt as good as it could be.
+Everything is rendered in 60fps, but rendering too many instances at once makes the framerate drop.
+Since flutter currently doesn't allow us to access OpenGL the performance isn't as good as it could be.
